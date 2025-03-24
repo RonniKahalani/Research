@@ -1,0 +1,18 @@
+.message-spinner {
+    width: 30px;
+    height: 30px;
+}
+
+#spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -7px;
+    margin-left: -7px;
+    z-index: 1000;
+}
+
+label {
+    font-weight: bold;
+}

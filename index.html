@@ -1,0 +1,143 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research</title>
+
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+
+    <link media="all" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
+    <link rel="stylesheet" href="master.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script defer src="research.js"></script>
+</head>
+
+<body>
+    <base target="_blank" href="">
+    <div class="container">
+        <div class="border-low row m-2 p-2">
+
+            <div class="row m-0 p-0">
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs col-6" id="mainTablist" role="tablist">
+
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#search"
+                            type="button" role="tab" aria-controls="search" aria-selected="true">Search</button>
+                    </li>
+
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings"
+                            type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
+                    </li>
+
+                </ul>
+
+                <!-- Icon links -->
+                <div class="col-6 text-end" style="margin-top:5px;">
+
+                    <i class="bi bi-twitter-x icon mx-1 h5" title="More info on X/Twitter."
+                        onclick="window.open('https://x.com/RonniKahalani', '_blank')"></i>
+
+                    <i class="bi bi-github icon mx-1 h5" title="Get code on GitHub."
+                        onclick="window.open('https://github.com/RonniKahalani/good-evil-gpt', '_blank')"></i>
+
+                    <i class="bi bi-linkedin icon mx-1 h5" title="More on LinkedIn."
+                        onclick="window.open('https://www.linkedin.com/in/kahalani', '_blank')"></i>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+            <!-- Search tab -->
+            <div class="tab-pane active" id="search" role="tabpanel" aria-labelledby="search-tab">
+
+                <div class="row m-2 p-2">
+                    <h4>Company</h4>
+                    <div class="row m-1">
+                        <label class="col-2" for="company-name">Name</label>
+                        <input class="col-sm" type="text" id="company-name" placeholder="The company name"
+                            value="Telia Company Danmark A/S">
+                    </div>
+                    <div class="row m-1">
+                        <label class="col-2" for="company-id">Id (CVR)</label>
+                        <input class="col-sm" type="text" id="company-id" placeholder="The company vat/cvr number"
+                            value="18530740">
+                    </div>
+                    <div class="row m-1">
+                        <label class="col-2" for="company-website">Website/domain</label>
+                        <input class="col-sm" type="text" id="company-website" placeholder="The company website/domain"
+                            value="https://www.teliacompany.com/en/">
+                    </div>
+                    <div class="row m-1">
+                        <label class="col-2" for="company-website">Previous companies</label>
+                        <select class="col-sm" type="text" id="select-company" placeholder="Select a previous company"
+                            value="">
+                            <option value="">Select a previous company.</option>
+                        </select>
+                    </div>
+                    <div class="row m-1">
+                        <div class="col-sm"></div>
+                        <button id="btn-search" class="btn btn-primary btn-sm col-sm" onclick="search()">Search</button>
+                        <div class="col-sm"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                <div class="row m-2 p-2">
+                    <h4>Settings</h4>
+                    <div class="row m-1">
+                        <label class="col-2" for="query">Query</label>
+                        <textarea class="col-sm" type="text" id="query" rows="4"
+                            placeholder="Words or phrases to search for">ESG Report OR Responsible OR Sustainable OR Circular OR Decarbonization OR Regenerativ OR Zero Waste OR Ansvarlig OR Bæredygtig OR Bæredygtighed OR Cirkulær OR CSR OR CSRD OR ESG OR ESRS OR Kulstofreduktion OR LCA OR LCC OR Regenerativ OR SDG OR Upcycling OR ISO 9001 OR ISO 14001 OR ISO 45001 OR ISO 27001 OR Eco Label OR LEED OR DGNB OR Svanemærket OR BSCI OR Better Cotton OR EU blomsten OR FSC OR GOTS</textarea>
+                    </div>
+                    <div class="row m-1">
+                        <label class="col-2" for="system-prompt">System prompt</label>
+                        <textarea class="col-sm" type="text" id="system-prompt"
+                            placeholder="The behavior of the AI">You share information about a company</textarea>
+                    </div>
+                    <div class="row m-1">
+                        <label class="col-2" for="user-prompt">User prompt</label>
+                        <textarea class="col-sm" type="text" id="user-prompt"
+                            placeholder="The request prompt, Use $company and $query to reference the values">Give me what you know about company $company related to the subjects: $query. Include links to sources if available.</textarea>
+                    </div>
+                    <div class="row m-1">
+                        <label class="col-2" for="gpt-model">GPT model</label>
+                        <select class="col-sm" id="gpt-model">
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="gpt-4o" selected>GPT-4o</option>
+                        </select>
+                    </div>
+                    <div class="row m-1">
+                        <label class="col-2" for="max-tokens">Max tokens</label>
+                        <input class="col-sm" type="number" id="max-tokens" placeholder="Max. tokens" value="500">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div id="company-content"></div>
+            <div id="google-content"></div>
+            <div id="ai-content"></div>
+
+        </div>
+        <div id="spinner" class="spinner-border message-spinner" role="status"></div>
+
+        <div id="company-list"></div>
+</body>
+
+</html>

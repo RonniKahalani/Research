@@ -36,6 +36,10 @@ const MSG_NO_VALID_API_KEY_FROM_USER = "User did not provide a valid API key.";
 const MSG_API_KEY_SAVED = "API key saved to local storage.";
 const MSG_API_KEY_FOUND = "API key found in local storage.";
 
+const SEARCH_PDF = 'filetype:pdf';
+const SEARCH_SITE = 'site:';
+const SEARCH_AND = ' AND ';
+
 const DEFAULT_API_KEY = "your-api-key";
 let apiKey = DEFAULT_API_KEY;
 
@@ -55,6 +59,7 @@ const userPrompt = document.querySelector('#user-prompt');
 const systemPrompt = document.querySelector('#system-prompt');
 const selectCompany = document.querySelector('#select-company');
 
+const content = document.querySelector('#content');
 const aiContent = document.querySelector('#ai-content');
 const googleContent = document.querySelector('#google-content');
 const companyContent = document.querySelector('#company-content');
@@ -65,13 +70,29 @@ const spinner = document.querySelector('#spinner');
 btnSearch.onclick = () => search();
 selectCompany.onchange = (e) => companySelected(e);
 
+/**
+ * Search types.
+ */
+const SearchType = {
+    GLOBAL_TEXT: 'global-text',
+    GLOBAL_PDF: 'global-pdf',
+    COMPANY_TEXT: 'company-text',
+    COMPANY_PDF: 'company-pdf',
+    SCHOLAR_TEXT: 'scholar-text',
+    SCHOLAR_PDF: 'scholar-pdf'
+};
 
+/**
+ * Handles the selection of a company.
+ * @param {*} e 
+ */
 function companySelected(e) {
     const selectedCompany = companies.find(company => company.id === e.target.value);
     if (selectedCompany) {
         companyName.value = selectedCompany.name || '';
         companyId.value = selectedCompany.id || '';
         companyWebsite.value = selectedCompany.website || '';
+        content.innerHTML = selectedCompany.content || '';
     }
 }
 
@@ -141,20 +162,19 @@ async function search() {
     if (response.ok) {
 
         if (data.choices && data.choices.length > 0) {
-
-            const content = data.choices[0].message.content;
-            renderAIResponseUI(content);
-
+            const reply = data.choices[0].message.content;
+            renderAIResponseUI(reply);
+            company.content = content.innerHTML;
+            localStorage.setItem(LOCAL_ITEM_COMPANIES, JSON.stringify(companies));
         } else {
             console.error('Error: No response from ChatGPT');
         }
     } else {
         console.error('Error:', response.statusText !== "" ? response.statusText : data.error.message);
     }
+
     spinner.style.display = "none";
-
     updateUI();
-
 }
 
 /**
@@ -162,12 +182,11 @@ async function search() {
  */
 function renderCompanyUI() {
 
-    const virkLink = `<button class="btn btn-sm btn-primary" onclick="window.open('https://datacvr.virk.dk/enhed/virksomhed/${companyId.value}?fritekst=${companyName.value}%20&sideIndex=0&size=10','_blank')">Virk profile</button>`;
     companyContent.innerHTML = `
     <div class="card">
         <div class="card-header">
             <h4 class="card-title">${companyName.value} (${companyId.value})</h4>
-            ${virkLink} 
+            <button class="btn btn-sm btn-primary" onclick="window.open('https://datacvr.virk.dk/enhed/virksomhed/${companyId.value}?fritekst=${companyName.value}%20&sideIndex=0&size=10','_blank')">Virk Profile</button>
         </div>
     </div>`
 }
@@ -214,15 +233,12 @@ function renderGoogleSearchUI() {
         <h4 class="card-title">Google Search</h4>
 
         <div class="row text-center">
-            
             <div class="col-sm"></div>
-        
             <div class="row col-8">
             ${renderGoogleLinkSection('All of Google', 'globe', 'global')}
             ${renderGoogleLinkSection('Company Website', 'building', 'company')}  
             ${renderGoogleLinkSection('Scholar Publications', 'book', 'scholar')}
             </div>
-
             <div class="col-sm"></div>
         </div>
     </div>`;
@@ -240,13 +256,12 @@ function renderAIResponseUI(data) {
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-${marked.parse(data)}
+                    ${marked.parse(data)}
                 </div>
             </div>
         </div>
     </div>`
 }
-
 
 /**
  * Returns the host of an url.
@@ -262,15 +277,6 @@ function getHost(url) {
     }
 }
 
-const SearchType = {
-    GLOBAL_TEXT: 'global-text',
-    GLOBAL_PDF: 'global-pdf',
-    COMPANY_TEXT: 'company-text',
-    COMPANY_PDF: 'company-pdf',
-    SCHOLAR_TEXT: 'scholar-text',
-    SCHOLAR_PDF: 'scholar-pdf'
-};
-
 /**
  * Uses Google site search.
  */
@@ -281,22 +287,22 @@ function openGoogleSearch(type) {
 
     switch (type) {
         case SearchType.GLOBAL_TEXT:
-            searchQuery = companyName.value + ' AND ' + searchQuery;
+            searchQuery = companyName.value + SEARCH_AND + searchQuery;
             break;
         case SearchType.GLOBAL_PDF:
-            searchQuery = 'filetype:pdf ' + companyName.value + ' AND ' + searchQuery;
+            searchQuery = SEARCH_PDF + ' ' + companyName.value + SEARCH_AND + searchQuery;
             break;
         case SearchType.COMPANY_TEXT:
-            searchQuery = 'site:' + domain + ' ' + searchQuery;
+            searchQuery = SEARCH_SITE + domain + ' ' + searchQuery;
             break;
         case SearchType.COMPANY_PDF:
-            searchQuery = 'filetype:pdf site:' + domain + ' AND ' + searchQuery;
+            searchQuery = SEARCH_PDF + ' ' + SEARCH_SITE + domain + SEARCH_AND + searchQuery;
             break;
         case SearchType.SCHOLAR_TEXT:
-            searchQuery = companyName.value + ' AND ' + searchQuery;
+            searchQuery = companyName.value + SEARCH_AND + searchQuery;
             break;
         case SearchType.SCHOLAR_PDF:
-            searchQuery = 'filetype:pdf ' + companyName.value + ' AND ' + searchQuery;
+            searchQuery = SEARCH_PDF + ' ' + companyName.value + SEARCH_AND + searchQuery;
             break;    
         default:
             alert('Invalid search type');
@@ -310,7 +316,7 @@ function openGoogleSearch(type) {
 function updateUI() {
     selectCompany.options.length = 0;
     selectCompany.appendChild( new Option('Select a company', '') );
-    companies.forEach(company => selectCompany.appendChild( new Option(company.name, company.id)));
+    companies.forEach(company => selectCompany.appendChild( new Option(company.name + ' (' + company.id + ')', company.id)));
 }
 
 /**
@@ -351,8 +357,15 @@ function handleApiKey() {
 /**
  * Loads the companies from local storage.
  */
+function loadData() {
+    companies = JSON.parse(localStorage.getItem(LOCAL_ITEM_COMPANIES)) || [];
+}
+
+/**
+ * App start
+ */
 handleApiKey();
 if(!isApiKeyUnset()) {
-    companies = JSON.parse(localStorage.getItem('companies')) || [];
+    loadData();
     updateUI();
 }

@@ -282,27 +282,27 @@ function getHost(url) {
  */
 function openGoogleSearch(type) {
     let searchQuery = "(" + encodeURIComponent(query.value) + ")";
-    const host = getHost(companyWebsite.value);
-    const domain = host.split('.').slice(-2).join('.');
+    const site = getHost(companyWebsite.value);
+    const domain = site.split('.').slice(-2).join('.');
 
     switch (type) {
         case SearchType.GLOBAL_TEXT:
-            searchQuery = companyName.value + SEARCH_AND + searchQuery;
+            searchQuery = `"${companyName.value}" ${SEARCH_AND} ${searchQuery}`;
             break;
         case SearchType.GLOBAL_PDF:
-            searchQuery = SEARCH_PDF + ' ' + companyName.value + SEARCH_AND + searchQuery;
+            searchQuery = `${SEARCH_PDF} "${companyName.value}" ${SEARCH_AND} ${searchQuery}`;
             break;
         case SearchType.COMPANY_TEXT:
-            searchQuery = SEARCH_SITE + domain + ' ' + searchQuery;
+            searchQuery = `${SEARCH_SITE}${site} ${searchQuery}`;
             break;
         case SearchType.COMPANY_PDF:
-            searchQuery = SEARCH_PDF + ' ' + SEARCH_SITE + domain + SEARCH_AND + searchQuery;
+            searchQuery = `${SEARCH_PDF} ${SEARCH_SITE}${site} ${SEARCH_AND} ${searchQuery}`;
             break;
         case SearchType.SCHOLAR_TEXT:
-            searchQuery = companyName.value + SEARCH_AND + searchQuery;
+            searchQuery = `"${companyName.value}" ${SEARCH_AND} ${searchQuery}`;
             break;
         case SearchType.SCHOLAR_PDF:
-            searchQuery = SEARCH_PDF + ' ' + companyName.value + SEARCH_AND + searchQuery;
+            searchQuery = `${SEARCH_PDF} "${companyName.value}" ${SEARCH_AND} ${searchQuery}`;
             break;    
         default:
             alert('Invalid search type');

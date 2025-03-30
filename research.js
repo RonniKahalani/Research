@@ -248,6 +248,9 @@ function renderGoogleSearchUI() {
             </div>
             <div class="col-sm"></div>
         </div>
+        <div class="row text-center m-2">
+        <div class="col-12">Also check out<br><a href="https://sustainabilityreports.com" target="_blank">Sustainability Reports</a> and <a href="https://www.opensustainabilityindex.org" target="_blank">Open Sustainability Index</a>.</div>
+        </div>
     </div>`;
 }
 

@@ -62,37 +62,38 @@
             <!-- Search tab -->
             <div class="tab-pane active" id="search" role="tabpanel" aria-labelledby="search-tab">
 
-                <div class="row m-2 p-2">
-                    <h4>Company</h4>
-                    <div class="row m-1">
-                        <label class="col-2" for="company-name">Name</label>
-                        <input class="col-sm" type="text" id="company-name" placeholder="The company name"
-                            value="Telia Company Danmark A/S">
+                <form onsubmit="search(); return false;" class="row m-2 p-2">
+                    <div class="row m-2 p-2">
+                        <h4>Company</h4>
+                        <div class="row m-1">
+                            <label class="col-2" for="company-name">Name</label>
+                            <input class="col-sm" type="text" id="company-name" placeholder="The company name"
+                                value="Telia" required>
+                        </div>
+                        <div class="row m-1">
+                            <label class="col-2" for="company-id">Id (CVR)</label>
+                            <input class="col-sm" type="text" id="company-id" placeholder="The company vat/cvr number"
+                                value="18530740" required>
+                        </div>
+                        <div class="row m-1">
+                            <label class="col-2" for="company-website">Website/domain</label>
+                            <input class="col-sm" type="text" id="company-website"
+                                placeholder="The company website/domain" value="https://www.teliacompany.com/en/">
+                        </div>
+                        <div class="row m-1">
+                            <label class="col-2" for="company-website">Previous companies</label>
+                            <select class="col-sm" type="text" id="select-company"
+                                placeholder="Select a previous company" value="">
+                                <option value="">Select a previous company.</option>
+                            </select>
+                        </div>
+                        <div class="row m-1">
+                            <div class="col-sm"></div>
+                            <button id="btn-search" type="submit" class="btn btn-primary btn-sm col-sm">Search</button>
+                            <div class="col-sm"></div>
+                        </div>
                     </div>
-                    <div class="row m-1">
-                        <label class="col-2" for="company-id">Id (CVR)</label>
-                        <input class="col-sm" type="text" id="company-id" placeholder="The company vat/cvr number"
-                            value="18530740">
-                    </div>
-                    <div class="row m-1">
-                        <label class="col-2" for="company-website">Website/domain</label>
-                        <input class="col-sm" type="text" id="company-website" placeholder="The company website/domain"
-                            value="https://www.teliacompany.com/en/">
-                    </div>
-                    <div class="row m-1">
-                        <label class="col-2" for="company-website">Previous companies</label>
-                        <select class="col-sm" type="text" id="select-company" placeholder="Select a previous company"
-                            value="">
-                            <option value="">Select a previous company.</option>
-                        </select>
-                    </div>
-                    <div class="row m-1">
-                        <div class="col-sm"></div>
-                        <button id="btn-search" class="btn btn-primary btn-sm col-sm" onclick="search()">Search</button>
-                        <div class="col-sm"></div>
-                    </div>
-                </div>
-
+                </form>
             </div>
             <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
                 <div class="row m-2 p-2">

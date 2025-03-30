@@ -60,9 +60,9 @@ const systemPrompt = document.querySelector('#system-prompt');
 const selectCompany = document.querySelector('#select-company');
 
 const content = document.querySelector('#content');
-const aiContent = document.querySelector('#ai-content');
-const googleContent = document.querySelector('#google-content');
-const companyContent = document.querySelector('#company-content');
+let aiContent = document.querySelector('#ai-content');
+let googleContent = document.querySelector('#google-content');
+let companyContent = document.querySelector('#company-content');
 
 const maxTokens = document.querySelector('#max-tokens');
 const spinner = document.querySelector('#spinner');
@@ -102,11 +102,11 @@ function companySelected(e) {
  */
 function getPayload() {
 
-    const prompt = userPrompt.value.replaceAll('$query', query.value).replaceAll('$company', companyName.value);
+    const prompt = userPrompt.value.trim().replaceAll('$query', query.value).replaceAll('$company', companyName.value.trim());
     return {
         model: gptModel.value,
         messages: [
-            { "role": "system", "content": systemPrompt.value},
+            { "role": "system", "content": systemPrompt.value.trim() },
             { "role": "user", "content": prompt}
         ]
     };
@@ -132,22 +132,27 @@ function getSettings() {
  */
 async function search() {
 
-    if (!companyName.value || !query.value || !companyId.value || !companyWebsite.value) {
+    const companyIdValue = companyId.value.trim();
+    const companyWebsiteValue = companyWebsite.value.trim();
+    const companyNameValue = companyName.value.trim();
+    const queryValue = query.value.trim();
+
+    if (!companyNameValue || !queryValue || !companyIdValue || !companyWebsiteValue) {
         alert('Please fill in all fields');
         return;
     }
 
-    let company = null;
-    const index = companies.findIndex(company => company.id === companyId.value);
+    let setectedCompany = null;
+    const index = companies.findIndex(company => company.id.trim() === companyIdValue);
     if(index !== -1) {
-        company = companies[index];
+        setectedCompany = companies[index];
     } else {
-        company = { id: companyId.value};
-        companies.push(company);
+        setectedCompany = { id: companyIdValue};
+        companies.push(setectedCompany);
     }
 
-    company.name = companyName.value;
-    company.website = companyWebsite.value;
+    setectedCompany.name = companyNameValue;
+    setectedCompany.website = companyWebsiteValue;
 
     localStorage.setItem(LOCAL_ITEM_COMPANIES, JSON.stringify(companies));
 
@@ -164,7 +169,7 @@ async function search() {
         if (data.choices && data.choices.length > 0) {
             const reply = data.choices[0].message.content;
             renderAIResponseUI(reply);
-            company.content = content.innerHTML;
+            setectedCompany.content = content.innerHTML;
             localStorage.setItem(LOCAL_ITEM_COMPANIES, JSON.stringify(companies));
         } else {
             console.error('Error: No response from ChatGPT');
@@ -181,12 +186,15 @@ async function search() {
  * Renders the company information UI.
  */
 function renderCompanyUI() {
+    const companyIdValue = companyId.value.trim();
+    const companyNameValue = companyName.value.trim();
 
+    companyContent = document.querySelector('#company-content');
     companyContent.innerHTML = `
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">${companyName.value} (${companyId.value})</h4>
-            <button class="btn btn-sm btn-primary" onclick="window.open('https://datacvr.virk.dk/enhed/virksomhed/${companyId.value}?fritekst=${companyName.value}%20&sideIndex=0&size=10','_blank')">Virk Profile</button>
+            <h4 class="card-title">${companyNameValue} (${companyIdValue})</h4>
+            <button class="btn btn-sm btn-primary" onclick="window.open('https://datacvr.virk.dk/enhed/virksomhed/${companyIdValue}?fritekst=${companyNameValue}%20&sideIndex=0&size=10','_blank')">Virk Profile</button>
         </div>
     </div>`
 }
@@ -199,8 +207,7 @@ function renderCompanyUI() {
  */
 function createGoogleLink(type, title) {
 
-    const googleLink = `<button class="btn btn-sm btn-primary" onclick="openGoogleSearch('$type')">$title</button>`;
-    return googleLink.replaceAll('$type', type).replaceAll('$title', title);
+    return  `<button class="btn btn-sm btn-primary" title="${title}" onclick="openGoogleSearch('${type}')">${title}</button>`;
 }
 
 /**
@@ -213,7 +220,7 @@ function createGoogleLink(type, title) {
 function renderGoogleLinkSection(title, icon, type) {
 
     return `<div class="row col-sm">
-        <i class="bi bi-${icon} icon mx-1 h5" title="Search across the world."><br>${title}</i>
+        <i class="bi bi-${icon} icon mx-1 h5" title="${title}"><br>${title}</i>
         <div class="row m-0 p-0">
             <div class="col-sm"></div>
             <div class="col-sm m-0 p-0">${createGoogleLink(type + '-text', 'Text')}</div>
@@ -227,7 +234,7 @@ function renderGoogleLinkSection(title, icon, type) {
  * Renders the Google search UI.
  */
 function renderGoogleSearchUI() {
-
+    googleContent = document.querySelector('#google-content');
     googleContent.innerHTML = `<div class="card">
     <div class="card-header">
         <h4 class="card-title">Google Search</h4>
@@ -249,6 +256,7 @@ function renderGoogleSearchUI() {
  * @param {*} data 
  */
 function renderAIResponseUI(data) {
+    aiContent = document.querySelector('#ai-content');
     aiContent.innerHTML = `<div class="card">
         <div class="card-header">
             <h4 class="card-title">AI Response</h4>
@@ -283,7 +291,6 @@ function getHost(url) {
 function openGoogleSearch(type) {
     let searchQuery = "(" + encodeURIComponent(query.value) + ")";
     const site = getHost(companyWebsite.value);
-    const domain = site.split('.').slice(-2).join('.');
 
     switch (type) {
         case SearchType.GLOBAL_TEXT:
@@ -369,3 +376,6 @@ if(!isApiKeyUnset()) {
     loadData();
     updateUI();
 }
+
+
+console.log(" Ronni ".trim())

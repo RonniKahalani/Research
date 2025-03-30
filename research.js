@@ -379,6 +379,3 @@ if(!isApiKeyUnset()) {
     loadData();
     updateUI();
 }
-
-
-console.log(" Ronni ".trim())

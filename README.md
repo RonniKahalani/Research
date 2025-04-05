@@ -1,5 +1,6 @@
 # Research
 This is a prototype of a search tool use in a danish reseach project concerning companies and their communication on sustainability publicly.
+
 ![image](https://github.com/user-attachments/assets/0d5b4cde-07c0-4f58-88c4-70fcac517346)
 
 
